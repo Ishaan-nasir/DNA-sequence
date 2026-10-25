@@ -259,6 +259,20 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
+        // validation for sequence id length
+        if (id.length() > 10) {
+            JOptionPane.showMessageDialog(this, "Sequence ID cannot exceed 10 characters");
+            return;
+        }
+
+        // check if sequence id already exists
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).toString().equalsIgnoreCase(id)) {
+                JOptionPane.showMessageDialog(this, "Sequence ID must be unique");
+                return;
+            }
+        }
+
         // validation for dna bases
         if (!isValidDNA(seqText)) {
             JOptionPane.showMessageDialog(this, "Raw sequence must contain only A, T, C, G bases");
@@ -271,7 +285,17 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
+        if (chromoText.length() > 7) {
+            JOptionPane.showMessageDialog(this, "Chromosome number cannot exceed 7 digits");
+            return;
+        }
+
         int chromo = Integer.parseInt(chromoText);
+        if (chromo <= 0) {
+            JOptionPane.showMessageDialog(this, "Chromosome number cannot be zero");
+            return;
+        }
+
         DNASequence seq = new DNASequence(id, name, seqText, chromo);
         addRow(seq);
         JOptionPane.showMessageDialog(this, "Record added to table successfully");
@@ -323,6 +347,20 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
+        // validation for sequence id length
+        if (id.length() > 10) {
+            JOptionPane.showMessageDialog(this, "Sequence ID cannot exceed 10 characters");
+            return;
+        }
+
+        // check if sequence id already exists for another record
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if (i != row && model.getValueAt(i, 0).toString().equalsIgnoreCase(id)) {
+                JOptionPane.showMessageDialog(this, "Sequence ID already exists for another record");
+                return;
+            }
+        }
+
         // validation for dna bases
         if (!isValidDNA(seqText)) {
             JOptionPane.showMessageDialog(this, "Raw sequence must contain only A, T, C, G bases");
@@ -335,7 +373,17 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
+        if (chromoText.length() > 7) {
+            JOptionPane.showMessageDialog(this, "Chromosome number cannot exceed 7 digits");
+            return;
+        }
+
         int chromo = Integer.parseInt(chromoText);
+        if (chromo <= 0) {
+            JOptionPane.showMessageDialog(this, "Chromosome number cannot be zero");
+            return;
+        }
+
         DNASequence seq = new DNASequence(id, name, seqText, chromo);
 
         model.setValueAt(seq.getSequenceId(), row, 0);
