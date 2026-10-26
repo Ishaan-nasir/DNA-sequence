@@ -137,7 +137,7 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         } else if (e.getSource() == updateButton) {
             updateRecord();
         } else if (e.getSource() == saveButton) {
-            saveDataToFile();
+            saveDataToFile(true);
         } else if (e.getSource() == searchButton) {
             searchRecord();
         }
@@ -187,7 +187,7 @@ public class DNASequenceApp extends JFrame implements ActionListener {
     }
 
     // save current table data into text file
-    private void saveDataToFile() {
+    private void saveDataToFile(boolean showMessage) {
         try {
             FileWriter fw = new FileWriter("dna_sequences.txt");
             PrintWriter pw = new PrintWriter(fw);
@@ -199,9 +199,13 @@ public class DNASequenceApp extends JFrame implements ActionListener {
                 pw.println(id + "," + name + "," + rawSeq + "," + chromo);
             }
             pw.close();
-            JOptionPane.showMessageDialog(this, "Table data saved to dna_sequences.txt");
+            if (showMessage) {
+                JOptionPane.showMessageDialog(this, "Table data saved to dna_sequences.txt");
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error saving data to text file");
+            if (showMessage) {
+                JOptionPane.showMessageDialog(this, "Error saving data to text file");
+            }
         }
     }
 
@@ -304,6 +308,7 @@ public class DNASequenceApp extends JFrame implements ActionListener {
 
         DNASequence seq = new DNASequence(id, name, seqText, chromo);
         addRow(seq);
+        saveDataToFile(false);
         JOptionPane.showMessageDialog(this, "Record added to table successfully");
     }
 
@@ -405,6 +410,7 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         model.setValueAt(seq.getSequenceLength(), row, 4);
         model.setValueAt(seq.getGcContent(), row, 5);
 
+        saveDataToFile(false);
         JOptionPane.showMessageDialog(this, "Record updated successfully");
     }
 
@@ -426,6 +432,7 @@ public class DNASequenceApp extends JFrame implements ActionListener {
 
         if (confirm == JOptionPane.YES_OPTION) {
             model.removeRow(row);
+            saveDataToFile(false);
             JOptionPane.showMessageDialog(this, "Record deleted successfully");
         }
     }
