@@ -1,4 +1,3 @@
-SEQ-1092,Homo sapiens,ATGCGATCG,17
 SEQ-2041,Escherichia coli,GCATTCGA,1
 SEQ-3088,Drosophila melanogaster,AATTTGCGC,3
 SEQ-2349,Homo sapiens,ATGACGA,8

@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DNASequenceApp extends JFrame implements ActionListener {
@@ -30,6 +31,9 @@ public class DNASequenceApp extends JFrame implements ActionListener {
     // table and table model to display data
     private JTable table;
     private DefaultTableModel model;
+
+    // list to store dna sequence objects in memory
+    private ArrayList<DNASequence> sequenceList = new ArrayList<>();
 
     // constructor to build the interface
     public DNASequenceApp() {
@@ -172,17 +176,14 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         }
     }
 
-    // save current table data into text file
+    // save current sequence list into text file
     private void saveDataToFile() {
         try {
             FileWriter fw = new FileWriter("dna_sequences.txt");
             PrintWriter pw = new PrintWriter(fw);
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String id = model.getValueAt(i, 0).toString();
-                String name = model.getValueAt(i, 1).toString();
-                String rawSeq = model.getValueAt(i, 2).toString();
-                String chromo = model.getValueAt(i, 3).toString();
-                pw.println(id + "," + name + "," + rawSeq + "," + chromo);
+            for (int i = 0; i < sequenceList.size(); i++) {
+                DNASequence seq = sequenceList.get(i);
+                pw.println(seq.getSequenceId() + "," + seq.getOrganismName() + "," + seq.getRawSequence() + "," + seq.getChromosomeNumber());
             }
             pw.close();
             JOptionPane.showMessageDialog(this, "Table data saved to dna_sequences.txt");
@@ -191,8 +192,9 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         }
     }
 
-    // add one row into the table
+    // add one row into the list and table
     private void addRow(DNASequence seq) {
+        sequenceList.add(seq);
         model.addRow(new Object[]{
             seq.getSequenceId(),
             seq.getOrganismName(),
@@ -251,9 +253,9 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
-        // check if sequence id already exists
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).toString().equalsIgnoreCase(id)) {
+        // check if sequence id already exists in object list
+        for (int i = 0; i < sequenceList.size(); i++) {
+            if (sequenceList.get(i).getSequenceId().equalsIgnoreCase(id)) {
                 JOptionPane.showMessageDialog(this, "Sequence ID must be unique");
                 return;
             }
@@ -302,13 +304,14 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         }
 
         boolean found = false;
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (model.getValueAt(i, 0).toString().equalsIgnoreCase(searchId)) {
+        for (int i = 0; i < sequenceList.size(); i++) {
+            if (sequenceList.get(i).getSequenceId().equalsIgnoreCase(searchId)) {
                 table.setRowSelectionInterval(i, i);
-                idField.setText(model.getValueAt(i, 0).toString());
-                nameBox.setSelectedItem(model.getValueAt(i, 1).toString());
-                seqField.setText(model.getValueAt(i, 2).toString());
-                chromoField.setText(model.getValueAt(i, 3).toString());
+                DNASequence foundSeq = sequenceList.get(i);
+                idField.setText(foundSeq.getSequenceId());
+                nameBox.setSelectedItem(foundSeq.getOrganismName());
+                seqField.setText(foundSeq.getRawSequence());
+                chromoField.setText(String.valueOf(foundSeq.getChromosomeNumber()));
                 JOptionPane.showMessageDialog(this, "Record found");
                 found = true;
                 break;
@@ -345,9 +348,9 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
-        // check if sequence id already exists for another record
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (i != row && model.getValueAt(i, 0).toString().equalsIgnoreCase(id)) {
+        // check if sequence id already exists for another record in object list
+        for (int i = 0; i < sequenceList.size(); i++) {
+            if (i != row && sequenceList.get(i).getSequenceId().equalsIgnoreCase(id)) {
                 JOptionPane.showMessageDialog(this, "Sequence ID already exists for another record");
                 return;
             }
@@ -384,6 +387,8 @@ public class DNASequenceApp extends JFrame implements ActionListener {
 
         DNASequence seq = new DNASequence(id, name, seqText, chromo);
 
+        // update both object list and table display
+        sequenceList.set(row, seq);
         model.setValueAt(seq.getSequenceId(), row, 0);
         model.setValueAt(seq.getOrganismName(), row, 1);
         model.setValueAt(seq.getRawSequence(), row, 2);
@@ -411,6 +416,8 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
+            // remove from both object list and table display
+            sequenceList.remove(row);
             model.removeRow(row);
             JOptionPane.showMessageDialog(this, "Record deleted successfully");
         }
