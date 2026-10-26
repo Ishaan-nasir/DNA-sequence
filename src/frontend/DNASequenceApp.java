@@ -279,6 +279,12 @@ public class DNASequenceApp extends JFrame implements ActionListener {
             return;
         }
 
+        // validation for raw sequence length
+        if (seqText.length() > 7) {
+            JOptionPane.showMessageDialog(this, "Raw sequence cannot exceed 7 characters");
+            return;
+        }
+
         // validation for chromosome number
         if (!isInteger(chromoText)) {
             JOptionPane.showMessageDialog(this, "Chromosome must be a positive number");
@@ -364,6 +370,12 @@ public class DNASequenceApp extends JFrame implements ActionListener {
         // validation for dna bases
         if (!isValidDNA(seqText)) {
             JOptionPane.showMessageDialog(this, "Raw sequence must contain only A, T, C, G bases");
+            return;
+        }
+
+        // validation for raw sequence length
+        if (seqText.length() > 7) {
+            JOptionPane.showMessageDialog(this, "Raw sequence cannot exceed 7 characters");
             return;
         }
 
